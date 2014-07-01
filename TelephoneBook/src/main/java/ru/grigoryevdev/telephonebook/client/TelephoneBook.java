@@ -26,7 +26,8 @@ public class TelephoneBook implements EntryPoint {
 
 	private PhoneBookServiceAsync phoneBookService = GWT
 			.create(PhoneBookService.class);
-	private Label errorLabel = new Label("Ok");
+	private Label errorLabelStreet = new Label("Street");
+	private Label errorLabelPhone = new Label("Phone");	
 	private Button addButton = new Button("Add");
 	private FlexTable phonesFlexTable = new FlexTable();
 	private VerticalPanel mainPanel = new VerticalPanel();
@@ -64,9 +65,9 @@ public class TelephoneBook implements EntryPoint {
 
 		mainPanel.add(phonesFlexTable);
 		RootPanel.get("phoneNumberList").add(mainPanel);
-		RootPanel.get().add(errorLabel);
-		addPanel.add(firstName);
+		RootPanel.get().add(errorLabelStreet);		
 		addPanel.add(lastName);
+		addPanel.add(firstName);		
 		addPanel.add(patronymic);
 		addPanel.add(phoneNumber);
 		addPanel.add(street);
@@ -74,32 +75,56 @@ public class TelephoneBook implements EntryPoint {
 		addPanel.add(flatNumber);
 		addPanel.add(addButton);
 		RootPanel.get().add(addPanel);
+		RootPanel.get().add(errorLabelPhone);
 	}
 
 	private void initHandlers() {
 
 		addButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent arg0) {
-				Phone phone = new Phone();
 				Street streetName = new Street();
-				phone.setfirstName(firstName.getText());
+				streetName.setStreet(street.getText());
+				phoneBookService.addStreet(streetName, new AsyncCallback<Void>() {
+					
+					public void onSuccess(Void arg0) {
+						errorLabelStreet.setText(street.getText());
+						
+					}
+					
+					public void onFailure(Throwable arg0) {
+						errorLabelStreet.setText("Error record "+ street.getText());
+						
+					}
+				});
+								
+				Phone phone = new Phone();
+				
 				phone.setlastName(lastName.getText());
+				phone.setfirstName(firstName.getText());				
 				phone.setPatronymic(patronymic.getText());
-				phone.setTelephone(phoneNumber.getText());
-		     //   phone.setStreet.(streetName.setStreet(street.getText()));
+				phone.setTelephone(phoneNumber.getText());				
+			    phone.setStreet(streetName);
 				phone.setHouseNumber(Integer.parseInt(houseNumber.getText()));
 				phone.setFlatNumber(Integer.parseInt(flatNumber.getText()));
 
 				phoneBookService.addPhone(phone, new AsyncCallback<Void>() {
 					
 					public void onSuccess(Void arg0) {
-						errorLabel.setText("Ok!");
-						refreshPhonesTable();
+						errorLabelPhone.setText("Ok!");
 						
+						lastName.setText("");
+						firstName.setText("");
+						patronymic.setText("");
+						phoneNumber.setText("");
+						street.setText("");
+						houseNumber.setText("");
+						flatNumber.setText("");
+						
+						refreshPhonesTable();						
 					}
 					
 					public void onFailure(Throwable caught) {
-						errorLabel.setText(SERVER_ERROR);
+						errorLabelPhone.setText(SERVER_ERROR);
 						
 					}
 				});
@@ -116,6 +141,16 @@ public class TelephoneBook implements EntryPoint {
 				initWidgets();
 				
 				for (Phone phone : phoneList) {
+					Button removePhoneButton = new Button("x");
+					removePhoneButton.addStyleDependentName("remove");
+				/*	removePhoneButton.addClickHandler(new ClickHandler() {
+				      public void onClick(ClickEvent event) {
+				        int removedIndex = indexOf(phone);
+				        phoneList.remove(removedIndex);
+				        phonesFlexTable.removeRow(removedIndex+1);
+				      }
+				    });*/
+					
 					int row = phonesFlexTable.getRowCount();
 					phonesFlexTable.setText(row, 0, phone.getlastName()); 							
 					phonesFlexTable.setText(row, 1, phone.getfirstName()); 
@@ -127,12 +162,13 @@ public class TelephoneBook implements EntryPoint {
 							.toString());
 					phonesFlexTable.setText(row, 6, phone.getFlatNumber()
 							.toString());
+					phonesFlexTable.setWidget(row, 7, removePhoneButton);
 				}
 
 			}
 
 			public void onFailure(Throwable caught) {
-				errorLabel.setText(SERVER_ERROR);
+				errorLabelPhone.setText(SERVER_ERROR);
 			}
 		});
 	}

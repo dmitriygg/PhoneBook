@@ -17,3 +17,8 @@ body {
   padding: 2px;
   margin-bottom:6px;
 }
+
+/* stock list, the Remove button */
+.gwt-Button-remove {
+  width: 50px;
+}
