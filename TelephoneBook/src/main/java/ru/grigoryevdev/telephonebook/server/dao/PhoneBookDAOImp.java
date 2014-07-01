@@ -23,7 +23,7 @@ public class PhoneBookDAOImp implements PhoneBookDAO {
 		return sessionFactory.getCurrentSession().createQuery("from Phone")
 				.list();
 	}
-
+    
 	public void removePhone(Integer id) {
 		Phone phone = (Phone) sessionFactory.getCurrentSession().load(
 				Phone.class, id);

@@ -84,7 +84,7 @@ public class TelephoneBook implements EntryPoint {
 			public void onClick(ClickEvent arg0) {
 				Street streetName = new Street();
 				streetName.setStreet(street.getText());
-												
+																				
 				Phone phone = new Phone();
 				
 				phone.setlastName(lastName.getText());
@@ -124,20 +124,21 @@ public class TelephoneBook implements EntryPoint {
 
 		phoneBookService.listPhone(new AsyncCallback<List<Phone>>() {
 
-			public void onSuccess(List<Phone> phoneList) {
+			public void onSuccess(final List<Phone> phoneList) {
 				phonesFlexTable.removeAllRows();
 				initWidgets();
 				
-				for (Phone phone : phoneList) {
+				for (final Phone phone : phoneList) {
 					Button removePhoneButton = new Button("x");
 					removePhoneButton.addStyleDependentName("remove");
-				/*	removePhoneButton.addClickHandler(new ClickHandler() {
+					removePhoneButton.addClickHandler(new ClickHandler() {
 				      public void onClick(ClickEvent event) {
-				        int removedIndex = indexOf(phone);
-				        phoneList.remove(removedIndex);
-				        phonesFlexTable.removeRow(removedIndex+1);
-				      }
-				    });*/
+				    	  removePhoneFromList(phone);		
+				    	  int removedIndex = phoneList.indexOf(phone);
+					        phoneList.remove(removedIndex);
+					        phonesFlexTable.removeRow(removedIndex+1);
+				      }					
+				    });
 					
 					int row = phonesFlexTable.getRowCount();
 					phonesFlexTable.setText(row, 0, phone.getlastName()); 							
@@ -159,6 +160,23 @@ public class TelephoneBook implements EntryPoint {
 				errorLabelPhone.setText(SERVER_ERROR);
 			}
 		});
+	}
+	
+	private void removePhoneFromList(Phone phone) {		
+		
+		phoneBookService.removePhone(phone.getId(), new AsyncCallback<Void>() {
+			
+			public void onSuccess(Void arg0) {
+				errorLabelPhone.setText("Phone remove");
+				
+			}
+			
+			public void onFailure(Throwable arg0) {
+				errorLabelPhone.setText("Error remove");
+				
+			}
+		});
+		
 	}
 
 }
