@@ -84,19 +84,7 @@ public class TelephoneBook implements EntryPoint {
 			public void onClick(ClickEvent arg0) {
 				Street streetName = new Street();
 				streetName.setStreet(street.getText());
-				phoneBookService.addStreet(streetName, new AsyncCallback<Void>() {
-					
-					public void onSuccess(Void arg0) {
-						errorLabelStreet.setText(street.getText());
-						
-					}
-					
-					public void onFailure(Throwable arg0) {
-						errorLabelStreet.setText("Error record "+ street.getText());
-						
-					}
-				});
-								
+												
 				Phone phone = new Phone();
 				
 				phone.setlastName(lastName.getText());
