@@ -2,6 +2,7 @@ package ru.grigoryevdev.telephonebook.shared.domain;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ public class Phone implements Serializable {
 	@Column(name = "TELEPHONE")
 	private String telephone;
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="street_id")
 	private Street street;
     
